@@ -9,7 +9,7 @@ const initState = {
     {
       id: 1,
       text: "자세 교정하기",
-      done: true,
+      done: false,
     },
     {
       id: 2,
@@ -18,6 +18,9 @@ const initState = {
     },
   ],
 };
+
+const counts = initState.list.length;
+initState["nextID"] = counts;
 
 // 액션 타입 설정
 const CREATE = "todo/CREATE";
@@ -42,9 +45,29 @@ export function done(id) {
 export default function todo(state = initState, action) {
   switch (action.type) {
     case CREATE:
-      return console.log("CREATE 호출");
+      return {
+        ...state,
+        list: state.list.concat({
+          id: action.payload.id,
+          text: action.payload.text,
+          done: false,
+        }),
+        nextID: action.payload.id + 1,
+      };
     case DONE:
-      return console.log("DONE 호출");
+      return {
+        ...state,
+        list: state.list.map((el) => {
+          if (el.id === action.id) {
+            return {
+              ...el,
+              done: true,
+            };
+          } else {
+            return el;
+          }
+        }),
+      };
     default:
       return state;
   }
